@@ -4,7 +4,7 @@
 //  https://openweathermap.org/api → "API keys" tab
 // ============================================================
 
-const API_KEY = 'YOUR_API_KEY_HERE';
+const API_KEY = 'd06fc872554f5df71b90b05dfb2f20ba';
 const BASE    = 'https://api.openweathermap.org/data/2.5';
 
 // ─── STATE ───────────────────────────────────────────────────
