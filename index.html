@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-mark"></div>
+        <span class="logo-text">skies</span>
+      </div>
+      <div class="header-right">
+        <span class="unit-toggle">
+          <button class="unit-btn active" id="btn-c" onclick="setUnit('metric')">°C</button>
+          <span class="unit-sep">/</span>
+          <button class="unit-btn" id="btn-f" onclick="setUnit('imperial')">°F</button>
+        </span>
+      </div>
+    </header>
+
+    <!-- SEARCH -->
+    <section class="search-section">
+      <form id="search-form" class="search-form" onsubmit="handleSearch(event)">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            id="city-input"
+            class="search-input"
+            placeholder="Search city — Manila, Tokyo, Paris..."
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button type="submit" class="search-btn">Search</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main class="main" id="main-content">
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-illustration">
+          <div class="empty-sun"></div>
+          <div class="empty-cloud c1"></div>
+          <div class="empty-cloud c2"></div>
+        </div>
+        <p class="empty-title">Search for any city</p>
+        <p class="empty-sub">Get live weather and a 5-day forecast</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div class="error-state" id="error-state" style="display:none">
+        <div class="error-icon">!</div>
+        <p class="error-title" id="error-title">City not found</p>
+        <p class="error-sub" id="error-sub">Check the spelling and try again</p>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div class="loading-state" id="loading-state" style="display:none">
+        <div class="loader">
+          <div class="loader-ring"></div>
+          <div class="loader-ring r2"></div>
+          <div class="loader-ring r3"></div>
+        </div>
+        <p class="loading-text">Fetching weather data...</p>
+      </div>
+
+      <!-- WEATHER CONTENT -->
+      <div class="weather-content" id="weather-content" style="display:none">
+
+        <!-- CURRENT WEATHER CARD -->
+        <div class="current-card" id="current-card">
+          <div class="current-top">
+            <div class="current-location">
+              <h1 class="city-name" id="city-name">—</h1>
+              <p class="city-meta" id="city-meta">—</p>
+            </div>
+            <div class="current-condition">
+              <div class="weather-icon-wrap" id="weather-icon-wrap">
+                <img id="weather-icon" class="weather-icon" src="" alt="">
+              </div>
+              <p class="condition-text" id="condition-text">—</p>
+            </div>
+          </div>
+
+          <div class="current-temp-row">
+            <span class="temp-main" id="temp-main">—</span>
+            <div class="temp-range">
+              <span class="temp-hi" id="temp-hi">—</span>
+              <span class="temp-sep">↑</span>
+              <span class="temp-lo" id="temp-lo">—</span>
+              <span class="temp-sep">↓</span>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a5 5 0 0 1 5 5c0 5.25-5 11-5 11S7 12.25 7 7a5 5 0 0 1 5-5z"/><circle cx="12" cy="7" r="2"/></svg>
+              </div>
+              <span class="stat-value" id="stat-feels">—</span>
+              <span class="stat-label">Feels like</span>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10"/></svg>
+              </div>
+              <span class="stat-value" id="stat-humidity">—</span>
+              <span class="stat-label">Humidity</span>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+              </div>
+              <span class="stat-value" id="stat-wind">—</span>
+              <span class="stat-label">Wind</span>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <span class="stat-value" id="stat-visibility">—</span>
+              <span class="stat-label">Visibility</span>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+              </div>
+              <span class="stat-value" id="stat-uv">—</span>
+              <span class="stat-label">UV Index</span>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+              </div>
+              <span class="stat-value" id="stat-pressure">—</span>
+              <span class="stat-label">Pressure</span>
+            </div>
+          </div>
+
+          <div class="sun-row">
+            <div class="sun-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="1" y1="12" x2="3" y2="12"/></svg>
+              <span class="sun-label">Sunrise</span>
+              <span class="sun-time" id="stat-sunrise">—</span>
+            </div>
+            <div class="sun-bar-wrap">
+              <div class="sun-bar">
+                <div class="sun-progress" id="sun-progress"></div>
+                <div class="sun-dot" id="sun-dot"></div>
+              </div>
+            </div>
+            <div class="sun-item right">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+              <span class="sun-label">Sunset</span>
+              <span class="sun-time" id="stat-sunset">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORECAST -->
+        <div class="forecast-section">
+          <h2 class="forecast-title">5-Day Forecast</h2>
+          <div class="forecast-grid" id="forecast-grid"></div>
+        </div>
+
+        <!-- LAST UPDATED -->
+        <p class="last-updated" id="last-updated"></p>
+
+      </div>
+    </main>
+
+    <!-- API KEY NOTICE -->
+    <div class="api-notice" id="api-notice">
+      <div class="api-notice-inner">
+        <strong>Setup required:</strong> Open <code>weather.js</code> and replace <code>YOUR_API_KEY_HERE</code> with your free key from <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="weather.js"></script>
+</body>
+</html>
